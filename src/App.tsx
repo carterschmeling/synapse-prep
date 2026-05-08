@@ -1,5 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { subjects, allQuestionsFlat } from "./data/subjects";
+import { ProgressMap } from "./ProgressMap";
+import { topicKey } from "./progressUtils";
+import { PathLaneGrid, TrackTopicsPage } from "./TrackPlaythrough";
+import type { TrackId } from "./data/pathTracks";
 import { addXp, bumpFinalsCount, loadProgress, saveProgress } from "./storage";
 import type { Theme } from "./theme";
 import { toggleTheme } from "./theme";
@@ -11,8 +15,17 @@ function initialThemeFromDom(): Theme {
   return t === "light" || t === "dark" ? t : "dark";
 }
 
+type QuizReturn =
+  | { kind: "pathsHome" }
+  | { kind: "trackTopics"; trackId: TrackId }
+  | { kind: "subject" }
+  | { kind: "browse" };
+
 type View =
   | { name: "home" }
+  | { name: "track-topics"; trackId: TrackId }
+  | { name: "browse" }
+  | { name: "map" }
   | { name: "subject"; subject: Subject }
   | {
       name: "quiz";
@@ -22,6 +35,7 @@ type View =
       index: number;
       correctCount: number;
       selectedIndex: number | null;
+      returnTo: QuizReturn;
     }
   | {
       name: "finals";
@@ -30,10 +44,6 @@ type View =
       correctCount: number;
       selectedIndex: number | null;
     };
-
-function topicKey(subjectId: string, topicId: string): string {
-  return `${subjectId}:${topicId}`;
-}
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -72,7 +82,7 @@ export default function App() {
     [],
   );
 
-  const startTopicQuiz = (subject: Subject, topic: Topic) => {
+  const startTopicQuiz = (subject: Subject, topic: Topic, returnTo: QuizReturn) => {
     setView({
       name: "quiz",
       subject,
@@ -81,6 +91,7 @@ export default function App() {
       index: 0,
       correctCount: 0,
       selectedIndex: null,
+      returnTo,
     });
   };
 
@@ -89,6 +100,7 @@ export default function App() {
     topic: Topic,
     correct: number,
     total: number,
+    returnTo: QuizReturn,
   ) => {
     const key = topicKey(subject.id, topic.id);
     const prev = progress.topicProgress[key] ?? {
@@ -114,7 +126,15 @@ export default function App() {
       correct * 12 + (pct === 100 ? 40 : 0) + (mastered && !prev.mastered ? 25 : 0);
     next = addXp(next, xpGain);
     persist(next);
-    setView({ name: "subject", subject });
+    if (returnTo.kind === "pathsHome") {
+      setView({ name: "home" });
+    } else if (returnTo.kind === "trackTopics") {
+      setView({ name: "track-topics", trackId: returnTo.trackId });
+    } else if (returnTo.kind === "browse") {
+      setView({ name: "browse" });
+    } else {
+      setView({ name: "subject", subject });
+    }
   };
 
   const startFinals = () => {
@@ -139,13 +159,17 @@ export default function App() {
   };
 
   const exitQuiz = () => {
-    if (window.confirm("Leave quiz? This run will not be saved.")) {
-      setView(
-        view.name === "quiz"
-          ? { name: "subject", subject: view.subject }
-          : { name: "home" },
-      );
+    if (!window.confirm("Leave quiz? This run will not be saved.")) return;
+    if (view.name === "finals") {
+      setView({ name: "home" });
+      return;
     }
+    if (view.name !== "quiz") return;
+    const rt = view.returnTo;
+    if (rt.kind === "pathsHome") setView({ name: "home" });
+    else if (rt.kind === "trackTopics") setView({ name: "track-topics", trackId: rt.trackId });
+    else if (rt.kind === "browse") setView({ name: "browse" });
+    else setView({ name: "subject", subject: view.subject });
   };
 
   const cycleTheme = () => setTheme((t) => toggleTheme(t));
@@ -160,9 +184,9 @@ export default function App() {
               <span className="accent-word">Study Hall</span> HQ
             </h1>
             <p>
-              Quiz drills for real classes—English (Animal Farm by chapter), Algebra through Honors Geometry, Bio through
-              Honors Bio, World History and Modern World History. XP and streaks stay on this device: hit a topic when you
-              have a free period, or run the finals sprint when you want everything mixed together.
+              Paths matches four math boxes with several ELA, science, and history tracks each—open any box for lesson
+              tiles. Everything stays on this device. All courses lists Spanish, Psych, Econ, and the rest. Progress map
+              shows every subject.
             </p>
           </div>
           <div className="header-actions">
@@ -201,31 +225,65 @@ export default function App() {
         <nav className="nav-tabs" aria-label="Main">
           <button
             type="button"
-            className={view.name === "home" ? "active" : ""}
+            className={view.name === "home" || view.name === "track-topics" ? "active" : ""}
             onClick={() => setView({ name: "home" })}
           >
-            All classes
+            Paths
           </button>
-          {view.name === "subject" && (
-            <button type="button" className="active" disabled>
-              {view.subject.shortName}
-            </button>
-          )}
+          <button
+            type="button"
+            className={view.name === "browse" || view.name === "subject" ? "active" : ""}
+            onClick={() => setView({ name: "browse" })}
+          >
+            All courses
+          </button>
+          <button
+            type="button"
+            className={view.name === "map" ? "active" : ""}
+            onClick={() => setView({ name: "map" })}
+          >
+            Progress map
+          </button>
         </nav>
       )}
 
       {view.name === "home" && (
         <>
-          <section className="finals-intro">
+          <p className="paths-intro">
+            Math, ELA, Science, and History each have their own row of course boxes (like the four math tracks). Open any
+            box for lesson tiles—tap a lesson to practice; checkmarks mean mastery (80%+).
+          </p>
+          <PathLaneGrid progress={progress} onOpenTrack={(trackId) => setView({ name: "track-topics", trackId })} />
+          <section className="finals-intro finals-intro--compact">
             <h2>Finals sprint</h2>
             <p>
-              {FINALS_COUNT} random questions pulled from every subject—quick pressure-test before a unit exam or finals
-              week.
+              {FINALS_COUNT} random questions from every topic—mixed practice when you want a shock quiz.
             </p>
             <button type="button" className="btn-primary" onClick={startFinals}>
               Start sprint
             </button>
           </section>
+        </>
+      )}
+
+      {view.name === "track-topics" && (
+        <TrackTopicsPage
+          trackId={view.trackId}
+          progress={progress}
+          onBack={() => setView({ name: "home" })}
+          onPracticeTopic={(subject, topic) =>
+            startTopicQuiz(subject, topic, { kind: "trackTopics", trackId: view.trackId })
+          }
+        />
+      )}
+
+      {view.name === "browse" && (
+        <div className="browse-shell">
+          <h2 className="page-title">Every course</h2>
+          <p className="browse-lede">
+            Spanish, Psychology, Economics, Environmental Science, U.S. History, and duplicate access to anything already
+            on a path—pick by class name.
+          </p>
           <div className="card-grid">
             {subjects.map((s) => (
               <button
@@ -240,13 +298,21 @@ export default function App() {
               </button>
             ))}
           </div>
-        </>
+        </div>
+      )}
+
+      {view.name === "map" && (
+        <ProgressMap
+          subjects={subjects}
+          topicProgress={progress.topicProgress}
+          onOpenSubject={(s) => setView({ name: "subject", subject: s })}
+        />
       )}
 
       {view.name === "subject" && (
         <>
-          <button type="button" className="back-btn" onClick={() => setView({ name: "home" })}>
-            Back to classes
+          <button type="button" className="back-btn" onClick={() => setView({ name: "browse" })}>
+            Back to all courses
           </button>
           <h2 className="page-title">{view.subject.name}</h2>
           <div className="topic-list">
@@ -277,7 +343,7 @@ export default function App() {
                       <button
                         type="button"
                         className="btn-primary"
-                        onClick={() => startTopicQuiz(view.subject, t)}
+                        onClick={() => startTopicQuiz(view.subject, t, { kind: "subject" })}
                       >
                         Practice
                       </button>
@@ -312,7 +378,13 @@ export default function App() {
             onContinue={() => {
               const last = view.index + 1 >= view.order.length;
               if (last) {
-                finishTopicQuiz(view.subject, view.topic, view.correctCount, view.order.length);
+                finishTopicQuiz(
+                  view.subject,
+                  view.topic,
+                  view.correctCount,
+                  view.order.length,
+                  view.returnTo,
+                );
               } else {
                 setView({
                   ...view,

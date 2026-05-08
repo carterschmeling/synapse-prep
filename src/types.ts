@@ -5,7 +5,16 @@ export type SubjectId =
   | "world-history"
   | "honors-geometry"
   | "honors-biology"
-  | "modern-world-history";
+  | "modern-world-history"
+  | "chemistry"
+  | "physics"
+  | "spanish-1"
+  | "us-history"
+  | "environmental-science"
+  | "psychology"
+  | "economics"
+  | "precalculus"
+  | "calculus";
 
 export interface Question {
   id: string;

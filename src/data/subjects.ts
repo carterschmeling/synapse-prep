@@ -1,20 +1,38 @@
 import type { Question, Subject } from "../types";
 import { algebra } from "./algebra";
 import { biology } from "./biology";
+import { calculus } from "./calculus";
+import { chemistry } from "./chemistry";
+import { economics } from "./economics";
 import { english } from "./english";
+import { environmentalScience } from "./environmentalScience";
 import { honorsBiology } from "./honorsBiology";
 import { honorsGeometry } from "./honorsGeometry";
 import { modernWorldHistory } from "./modernWorldHistory";
+import { physics } from "./physics";
+import { precalculus } from "./precalculus";
+import { psychology } from "./psychology";
+import { spanish1 } from "./spanish1";
+import { usHistory } from "./usHistory";
 import { worldHistory } from "./worldHistory";
 
 export const subjects: Subject[] = [
   english,
   algebra,
-  biology,
-  worldHistory,
+  precalculus,
+  calculus,
   honorsGeometry,
+  biology,
   honorsBiology,
+  chemistry,
+  physics,
+  environmentalScience,
+  spanish1,
+  worldHistory,
   modernWorldHistory,
+  usHistory,
+  psychology,
+  economics,
 ];
 
 export function getSubject(id: string): Subject | undefined {
