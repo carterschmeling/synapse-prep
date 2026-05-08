@@ -1,1 +1,1 @@
-# synapse-prep
+# study-hall-hq

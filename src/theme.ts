@@ -1,6 +1,6 @@
 export type Theme = "light" | "dark";
 
-const KEY = "synapse-prep-theme";
+const KEY = "study-hall-hq-theme";
 
 export function getStoredTheme(): Theme | null {
   try {

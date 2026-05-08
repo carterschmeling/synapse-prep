@@ -1,4 +1,4 @@
-/* Synapse Prep — theme tokens */
+/* Study Hall HQ — theme tokens */
 :root[data-theme="dark"],
 :root:not([data-theme]) {
   color-scheme: dark;

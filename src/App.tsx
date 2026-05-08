@@ -155,14 +155,14 @@ export default function App() {
       <header className="app-header">
         <div className="header-top">
           <div className="brand">
-            <p className="brand-tagline">Olathe Northwest · study sidekick</p>
+            <p className="brand-tagline">Olathe Northwest · high school study hall</p>
             <h1 className="brand-title">
-              <span className="accent-word">Synapse</span> Prep
+              <span className="accent-word">Study Hall</span> HQ
             </h1>
             <p>
-              Quizzes for core and honors classes—English (Animal Farm by chapter), math through Honors Geometry, science
-              through Honors Biology, history plus Modern World History. Your streak, XP, and scores stay in this browser.
-              Crack a topic quiz or roll the finals sprint when you want mixed review.
+              Quiz drills for real classes—English (Animal Farm by chapter), Algebra through Honors Geometry, Bio through
+              Honors Bio, World History and Modern World History. XP and streaks stay on this device: hit a topic when you
+              have a free period, or run the finals sprint when you want everything mixed together.
             </p>
           </div>
           <div className="header-actions">
