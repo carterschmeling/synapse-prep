@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Synapse Prep — study quizzes for ONW</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      html[data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #0a0c10;
+        --surface: #141922;
+        --surface2: #1a222d;
+        --border: #2a3442;
+        --text: #eef2f8;
+        --muted: #8d9aad;
+        --accent: #6b9fff;
+        --accent-muted: #3d5580;
+        --on-accent: #061018;
+        --success: #3dcc85;
+        --danger: #f07178;
+        --correct-bg: rgba(61, 204, 133, 0.14);
+        --wrong-bg: rgba(240, 113, 120, 0.12);
+        --shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+        --hero-accent: rgba(107, 159, 255, 0.15);
+        --radius: 14px;
+        --font: "DM Sans", system-ui, sans-serif;
+      }
+      html[data-theme="light"] {
+        color-scheme: light;
+        --bg: #f4f6fa;
+        --surface: #ffffff;
+        --surface2: #eef1f7;
+        --border: #d4dbe8;
+        --text: #141922;
+        --muted: #5c677a;
+        --accent: #2563eb;
+        --accent-muted: #93b4f4;
+        --on-accent: #ffffff;
+        --success: #059669;
+        --danger: #dc2626;
+        --correct-bg: rgba(5, 150, 105, 0.12);
+        --wrong-bg: rgba(220, 38, 38, 0.08);
+        --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+        --hero-accent: rgba(37, 99, 235, 0.08);
+        --radius: 14px;
+        --font: "DM Sans", system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.55;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+      .app-shell {
+        max-width: 940px;
+        margin: 0 auto;
+        padding: 1.35rem 1.25rem 3rem;
+      }
+      .app-header {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .header-top {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+      .brand-tagline {
+        margin: 0 0 0.35rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .brand-title {
+        margin: 0 0 0.45rem;
+        font-size: clamp(1.35rem, 4vw, 1.6rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+      .accent-word {
+        color: var(--accent);
+      }
+      .brand p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.94rem;
+        max-width: 38rem;
+        line-height: 1.55;
+      }
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.45rem 0.88rem;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        font: inherit;
+        box-shadow: var(--shadow);
+      }
+      .theme-toggle:hover {
+        border-color: var(--accent-muted);
+      }
+      .theme-icon {
+        font-size: 1rem;
+        line-height: 1;
+      }
+      .stats-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+      .stat-pill {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 0.38rem 0.85rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+        box-shadow: var(--shadow);
+      }
+      .stat-pill strong {
+        color: var(--text);
+      }
+      .nav-tabs {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+      }
+      .nav-tabs button {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--muted);
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+      .nav-tabs button.active {
+        border-color: var(--accent);
+        color: var(--text);
+      }
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(216px, 1fr));
+        gap: 1rem;
+      }
+      .subject-card {
+        text-align: left;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        padding: 1.15rem 1rem;
+        cursor: pointer;
+        color: inherit;
+        font: inherit;
+        box-shadow: var(--shadow);
+        transition: border-color 0.18s, transform 0.18s;
+      }
+      .subject-card:hover {
+        border-color: var(--accent-muted);
+        transform: translateY(-2px);
+      }
+      .subject-card h2 {
+        margin: 0 0 0.25rem;
+        font-size: 1.05rem;
+      }
+      .tag {
+        margin: 0 0 0.75rem;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .badge {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+      .badge.ok {
+        border-color: var(--success);
+        color: var(--success);
+      }
+      .finals-intro {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        padding: 1.35rem;
+        margin-bottom: 1.25rem;
+        border-left: 4px solid var(--accent);
+        box-shadow: var(--shadow);
+        background-image: linear-gradient(135deg, var(--hero-accent), transparent 55%);
+      }
+      .finals-intro h2 {
+        margin: 0 0 0.45rem;
+        font-size: 1.1rem;
+      }
+      .finals-intro p {
+        margin: 0 0 1rem;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .page-title {
+        margin: 0 0 1rem;
+        font-size: 1.28rem;
+        font-weight: 600;
+      }
+      .btn-primary {
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: var(--on-accent);
+        padding: 0.58rem 1.15rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        font: inherit;
+      }
+      .back-btn {
+        border: none;
+        background: transparent;
+        color: var(--accent);
+        cursor: pointer;
+        margin-bottom: 1rem;
+        font: inherit;
+      }
+      .topic-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem 1.05rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: var(--surface);
+        margin-bottom: 0.75rem;
+        box-shadow: var(--shadow);
+      }
+      .topic-row h3 {
+        margin: 0;
+        font-size: 1rem;
+      }
+      .topic-row p {
+        margin: 0.2rem 0 0;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .progress-mini {
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .good {
+        color: var(--success);
+      }
+      .quiz-panel {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        padding: 1.3rem;
+        box-shadow: var(--shadow);
+      }
+      .quiz-meta {
+        font-size: 0.76rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 0.85rem;
+      }
+      .quiz-prompt {
+        margin: 0 0 1.25rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+      .choice {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        padding: 0.65rem 0.85rem;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+        font: inherit;
+      }
+      .choice:disabled {
+        cursor: default;
+      }
+      .choice.correct {
+        border-color: var(--success);
+        background: var(--correct-bg);
+      }
+      .choice.wrong {
+        border-color: var(--danger);
+        background: var(--wrong-bg);
+      }
+      .explain-box {
+        margin-top: 1rem;
+        padding: 0.85rem 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        font-size: 0.9rem;
+      }
+      .explain-box strong {
+        color: var(--accent);
+      }
+      .quiz-footer {
+        margin-top: 1.25rem;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="header-top">
+          <div class="brand">
+            <p class="brand-tagline">Olathe Northwest · study sidekick</p>
+            <h1 class="brand-title"><span class="accent-word">Synapse</span> Prep</h1>
+            <p>
+              Quizzes for core and honors classes—English (Animal Farm by chapter), math through Honors Geometry, science
+              through Honors Biology, history plus Modern World History. Progress stays in this browser.
+            </p>
+          </div>
+          <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
+        </div>
+        <div class="stats-bar" id="stats"></div>
+      </header>
+      <nav class="nav-tabs" id="nav" aria-label="Main"></nav>
+      <div id="screen-home"></div>
+      <div id="screen-subject" class="hidden"></div>
+      <div id="screen-quiz" class="hidden"></div>
+    </div>
+    <script src="animal-farm-data.js"></script>
+    <script>
+      const STORAGE_KEY = "onw-core-tutor-v1";
+      const FINALS_N = 10;
+      const THEME_KEY = "synapse-prep-theme";
+
+      function currentTheme() {
+        return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+      }
+
+      function applyStandaloneTheme(th) {
+        document.documentElement.setAttribute("data-theme", th);
+        document.documentElement.style.colorScheme = th === "light" ? "light" : "dark";
+        try {
+          localStorage.setItem(THEME_KEY, th);
+        } catch (e) {
+          void e;
+        }
+        const btn = document.getElementById("theme-toggle");
+        if (btn) {
+          const dark = th === "dark";
+          btn.innerHTML =
+            '<span class="theme-icon" aria-hidden="true">' +
+            (dark ? "☀" : "☾") +
+            "</span> " +
+            (dark ? "Light" : "Dark");
+          btn.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+        }
+      }
+
+      (function initStandaloneTheme() {
+        try {
+          const s = localStorage.getItem(THEME_KEY);
+          if (s === "light" || s === "dark") {
+            applyStandaloneTheme(s);
+            return;
+          }
+        } catch (e) {
+          void e;
+        }
+        if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+          applyStandaloneTheme("light");
+        } else {
+          applyStandaloneTheme("dark");
+        }
+      })();
+
+      document.getElementById("theme-toggle").addEventListener("click", function () {
+        applyStandaloneTheme(currentTheme() === "dark" ? "light" : "dark");
+      });
+
+      const subjects = [
+        {
+          id: "english",
+          shortName: "English",
+          name: "English 9",
+          tagline: "Literary foundations + Animal Farm (quiz every chapter)",
+          topics: [
+            {
+              id: "lit-terms",
+              title: "Literary devices",
+              blurb: "Spot metaphor, symbol, tone, and POV on exams.",
+              questions: [
+                {
+                  prompt: "First-person narration means the story is told by…",
+                  choices: [
+                    "An outside narrator who knows everyone's thoughts",
+                    "A character inside the story using “I”",
+                    "A narrator who only follows one character",
+                    "The author breaking the fourth wall only at the end",
+                  ],
+                  correctIndex: 1,
+                  explain:
+                    "First person uses a narrator who participates in the story and refers to themselves as “I.”",
+                },
+                {
+                  prompt: "Which is the best definition of “tone”?",
+                  choices: [
+                    "The lesson or moral the author wants you to learn",
+                    "The narrator's attitude toward the subject, conveyed through word choice",
+                    "The time and place where the story happens",
+                    "The central problem that drives the plot",
+                  ],
+                  correctIndex: 1,
+                  explain:
+                    "Tone is how the writing sounds emotionally—often revealed through diction and imagery.",
+                },
+              ],
+            },
+            {
+              id: "writing",
+              title: "Claims and evidence",
+              blurb: "Build arguments your teachers expect on essays.",
+              questions: [
+                {
+                  prompt: "A strong thesis statement should…",
+                  choices: [
+                    "List every fact you know about the topic",
+                    "Make a clear, arguable claim you can support with evidence",
+                    "Repeat the essay prompt in different words only",
+                    "End with a rhetorical question",
+                  ],
+                  correctIndex: 1,
+                  explain:
+                    "Your thesis previews your argument; it should be specific enough to defend with quotes and analysis.",
+                },
+              ],
+            },
+            ...(window.animalFarmTopics || []),
+          ],
+        },
+        {
+          id: "algebra",
+          shortName: "Algebra",
+          name: "Algebra 1",
+          tagline: "Expressions, equations, and graphs",
+          topics: [
+            {
+              id: "linear",
+              title: "Linear equations",
+              blurb: "Slope-intercept form and solving for x.",
+              questions: [
+                {
+                  prompt: "Solve for x: 3x − 7 = 14",
+                  choices: ["x = 7", "x = 9", "x = 21", "x = 3"],
+                  correctIndex: 0,
+                  explain: "Add 7 → 3x = 21; divide by 3 → x = 7.",
+                },
+                {
+                  prompt: "In y = mx + b, what does m represent?",
+                  choices: ["The y-intercept", "The slope", "The origin", "The x-intercept always"],
+                  correctIndex: 1,
+                  explain: "m is slope (rise over run); b is where the line crosses the y-axis.",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: "biology",
+          shortName: "Bio",
+          name: "Biology",
+          tagline: "Cells, energy, and heredity",
+          topics: [
+            {
+              id: "cells",
+              title: "Cell structure",
+              blurb: "Organelles and how they cooperate.",
+              questions: [
+                {
+                  prompt: "Which organelle is the primary site of ATP production in eukaryotes?",
+                  choices: ["Nucleus", "Ribosome", "Mitochondria", "Golgi apparatus"],
+                  correctIndex: 2,
+                  explain:
+                    "Mitochondria carry out cellular respiration to produce ATP—the cell's usable energy.",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: "world-history",
+          shortName: "History",
+          name: "World History",
+          tagline: "Patterns, causes, and timelines",
+          topics: [
+            {
+              id: "skills",
+              title: "Historical thinking",
+              blurb: "Sourcing, cause/effect, and comparison.",
+              questions: [
+                {
+                  prompt: "When a document was written and by whom matters most for…",
+                  choices: [
+                    "Memorizing dates only",
+                    "Understanding bias, audience, and reliability (sourcing)",
+                    "Ignoring the author's purpose",
+                    "Skipping context entirely",
+                  ],
+                  correctIndex: 1,
+                  explain:
+                    "Sourcing asks who, when, why—essential for interpreting evidence.",
+                },
+              ],
+            },
+          ],
+        },
+      ];
+
+      function loadProgress() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw)
+            return {
+              xp: 0,
+              streakDays: 0,
+              lastStudyDate: null,
+              topicProgress: {},
+              finalsSessionsCompleted: 0,
+            };
+          return JSON.parse(raw);
+        } catch {
+          return {
+            xp: 0,
+            streakDays: 0,
+            lastStudyDate: null,
+            topicProgress: {},
+            finalsSessionsCompleted: 0,
+          };
+        }
+      }
+
+      function saveProgress(p) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+      }
+
+      function todayISO() {
+        return new Date().toISOString().slice(0, 10);
+      }
+
+      function touchStreak(p) {
+        const today = todayISO();
+        if (p.lastStudyDate === today) return p;
+        if (!p.lastStudyDate) return { ...p, streakDays: 1, lastStudyDate: today };
+        const last = new Date(p.lastStudyDate + "T12:00:00");
+        const todayD = new Date(today + "T12:00:00");
+        const diffDays = Math.round((todayD - last) / (24 * 60 * 60 * 1000));
+        if (diffDays === 1) return { ...p, streakDays: p.streakDays + 1, lastStudyDate: today };
+        if (diffDays > 1) return { ...p, streakDays: 1, lastStudyDate: today };
+        return p;
+      }
+
+      function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function allQuestionsFlat() {
+        const out = [];
+        for (const s of subjects) {
+          for (const t of s.topics) {
+            for (const q of t.questions) {
+              out.push({ subject: s, topicId: t.id, q });
+            }
+          }
+        }
+        return out;
+      }
+
+      let progress = loadProgress();
+      let route = { type: "home" };
+
+      function topicKey(sid, tid) {
+        return sid + ":" + tid;
+      }
+
+      function renderStats() {
+        let mastered = 0;
+        let totalT = 0;
+        for (const s of subjects) {
+          for (const t of s.topics) {
+            totalT++;
+            const tp = progress.topicProgress[topicKey(s.id, t.id)];
+            if (tp && tp.mastered) mastered++;
+          }
+        }
+        document.getElementById("stats").innerHTML =
+          '<div class="stat-pill"><strong>' +
+          progress.xp +
+          '</strong> XP</div>' +
+          '<div class="stat-pill">Streak: <strong>' +
+          progress.streakDays +
+          "</strong> day(s)</div>" +
+          '<div class="stat-pill">Topics mastered: <strong>' +
+          mastered +
+          "</strong> / " +
+          totalT +
+          "</div>" +
+          '<div class="stat-pill">Finals sprints: <strong>' +
+          progress.finalsSessionsCompleted +
+          "</strong></div>";
+      }
+
+      function renderNav() {
+        const nav = document.getElementById("nav");
+        if (route.type === "quiz") {
+          nav.innerHTML = "";
+          return;
+        }
+        let html =
+          '<button type="button" class="' +
+          (route.type === "home" ? "active" : "") +
+          '" data-go="home">All classes</button>';
+        if (route.type === "subject") {
+          html +=
+            '<button type="button" class="active" disabled>' +
+            route.subject.shortName +
+            "</button>";
+        }
+        nav.innerHTML = html;
+        nav.querySelector('[data-go="home"]')?.addEventListener("click", () => {
+          route = { type: "home" };
+          render();
+        });
+      }
+
+      function renderHome() {
+        const el = document.getElementById("screen-home");
+        let cards = "";
+        for (const s of subjects) {
+          cards +=
+            '<button type="button" class="subject-card" data-subject="' +
+            s.id +
+            '"><h2>' +
+            s.shortName +
+            "</h2><p class='tag'>" +
+            s.tagline +
+            "</p><span class='badge'>" +
+            s.topics.length +
+            " topics</span></button>";
+        }
+        el.innerHTML =
+          '<section class="finals-intro"><h2>Finals sprint</h2><p>' +
+          FINALS_N +
+          ' random questions from every subject—quick warm-up or exam-week drill.</p><button type="button" class="btn-primary" id="btn-finals">Start sprint</button></section><div class="card-grid">' +
+          cards +
+          "</div>";
+        el.classList.remove("hidden");
+        el.querySelectorAll("[data-subject]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-subject");
+            route = { type: "subject", subject: subjects.find((x) => x.id === id) };
+            render();
+          });
+        });
+        document.getElementById("btn-finals").onclick = () => startFinals();
+      }
+
+      function renderSubject() {
+        const el = document.getElementById("screen-subject");
+        const s = route.subject;
+        let rows = "";
+        for (const t of s.topics) {
+          const tp = progress.topicProgress[topicKey(s.id, t.id)];
+          const pct = tp ? tp.lastScorePercent : null;
+          rows +=
+            '<div class="topic-row"><div><h3>' +
+            t.title +
+            "</h3><p>" +
+            t.blurb +
+            '</p></div><div style="text-align:right">' +
+            (tp && tp.mastered ? '<span class="badge ok">Mastered</span> ' : "") +
+            '<div class="progress-mini">' +
+            (pct != null
+              ? 'Last score: <span class="' +
+                (pct >= 80 ? "good" : "") +
+                '">' +
+                pct +
+                "%</span> · "
+              : "") +
+            t.questions.length +
+            ' questions</div><div style="margin-top:.5rem"><button type="button" class="btn-primary" data-topic="' +
+            t.id +
+            '">Practice</button></div></div></div>';
+        }
+        el.innerHTML =
+          '<button type="button" class="back-btn" id="back-subj">Back to classes</button><h2 class="page-title">' +
+          s.name +
+          '</h2><div id="topics">' +
+          rows +
+          "</div>";
+        el.classList.remove("hidden");
+        document.getElementById("back-subj").onclick = () => {
+          route = { type: "home" };
+          render();
+        };
+        el.querySelectorAll("[data-topic]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const tid = btn.getAttribute("data-topic");
+            const topic = s.topics.find((x) => x.id === tid);
+            startTopicQuiz(s, topic);
+          });
+        });
+      }
+
+      let quizState = null;
+
+      function startTopicQuiz(subject, topic) {
+        quizState = {
+          mode: "topic",
+          subject,
+          topic,
+          order: shuffle(topic.questions),
+          index: 0,
+          correctCount: 0,
+          selected: null,
+        };
+        route = { type: "quiz" };
+        render();
+      }
+
+      function startFinals() {
+        const pool = allQuestionsFlat();
+        const order = shuffle(pool).slice(0, Math.min(FINALS_N, pool.length));
+        quizState = {
+          mode: "finals",
+          order,
+          index: 0,
+          correctCount: 0,
+          selected: null,
+        };
+        route = { type: "quiz" };
+        render();
+      }
+
+      function finishTopicQuiz() {
+        const s = quizState.subject;
+        const t = quizState.topic;
+        const total = quizState.order.length;
+        const correct = quizState.correctCount;
+        const key = topicKey(s.id, t.id);
+        const prev = progress.topicProgress[key] || {
+          attempts: 0,
+          correct: 0,
+          lastScorePercent: 0,
+          mastered: false,
+        };
+        const pct = Math.round((correct / total) * 100);
+        const mastered = pct >= 80;
+        progress.topicProgress[key] = {
+          ...prev,
+          attempts: prev.attempts + 1,
+          correct: prev.correct + correct,
+          lastScorePercent: pct,
+          mastered: prev.mastered || mastered,
+        };
+        let next = touchStreak({ ...progress });
+        const xpGain =
+          correct * 12 + (pct === 100 ? 40 : 0) + (mastered && !prev.mastered ? 25 : 0);
+        next.xp += xpGain;
+        progress = next;
+        saveProgress(progress);
+        quizState = null;
+        route = { type: "subject", subject: s };
+        render();
+      }
+
+      function finishFinals() {
+        const total = quizState.order.length;
+        const correct = quizState.correctCount;
+        let next = touchStreak({ ...progress });
+        next.finalsSessionsCompleted += 1;
+        const pct = total ? Math.round((correct / total) * 100) : 0;
+        next.xp += correct * 15 + (pct >= 80 ? 50 : 0);
+        progress = next;
+        saveProgress(progress);
+        quizState = null;
+        route = { type: "home" };
+        render();
+      }
+
+      function renderQuiz() {
+        const shell = document.getElementById("screen-quiz");
+        const st = quizState;
+        const last = st.index + 1 >= st.order.length;
+        let label,
+          counter,
+          q,
+          exitLabel,
+          onExit;
+        if (st.mode === "topic") {
+          q = st.order[st.index];
+          label = st.subject.shortName + " — " + st.topic.title;
+          counter = "Question " + (st.index + 1) + " of " + st.order.length;
+          exitLabel = "Leave quiz";
+          onExit = () => {
+            if (confirm("Leave quiz? This run will not be saved.")) {
+              quizState = null;
+              route = { type: "subject", subject: st.subject };
+              render();
+            }
+          };
+        } else {
+          const item = st.order[st.index];
+          q = item.q;
+          label = "Finals sprint — " + item.subject.shortName;
+          counter = "Question " + (st.index + 1) + " of " + st.order.length;
+          exitLabel = "Leave sprint";
+          onExit = () => {
+            if (confirm("Leave sprint? This run will not be saved.")) {
+              quizState = null;
+              route = { type: "home" };
+              render();
+            }
+          };
+        }
+        const answered = st.selected !== null;
+        let choices = "";
+        for (let i = 0; i < q.choices.length; i++) {
+          let cls = "choice";
+          if (answered) {
+            if (i === q.correctIndex) cls += " correct";
+            else if (i === st.selected && i !== q.correctIndex) cls += " wrong";
+          }
+          choices +=
+            '<button type="button" class="' +
+            cls +
+            '" data-i="' +
+            i +
+            '"' +
+            (answered ? " disabled" : "") +
+            ">" +
+            q.choices[i] +
+            "</button>";
+        }
+        const explain = answered
+          ? '<div class="explain-box"><strong>Why:</strong> ' +
+            q.explain +
+            '</div><div class="quiz-footer"><button type="button" class="btn-primary" id="btn-next">' +
+            (last ? (st.mode === "topic" ? "Save results" : "Finish sprint") : "Next question") +
+            "</button></div>"
+          : "";
+        shell.innerHTML =
+          '<button type="button" class="back-btn" id="quiz-exit">' +
+          exitLabel +
+          '</button><div class="quiz-panel"><div class="quiz-meta">' +
+          label +
+          " · " +
+          counter +
+          '</div><p class="quiz-prompt">' +
+          q.prompt +
+          '</p><div id="choices">' +
+          choices +
+          "</div>" +
+          explain +
+          "</div>";
+        shell.classList.remove("hidden");
+        document.getElementById("quiz-exit").onclick = onExit;
+        if (!answered) {
+          shell.querySelectorAll(".choice").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const i = +btn.getAttribute("data-i");
+              const ok = i === q.correctIndex;
+              st.selected = i;
+              if (ok) st.correctCount++;
+              renderQuiz();
+            });
+          });
+        } else {
+          document.getElementById("btn-next").onclick = () => {
+            if (last) {
+              if (st.mode === "topic") finishTopicQuiz();
+              else finishFinals();
+            } else {
+              st.index++;
+              st.selected = null;
+              renderQuiz();
+            }
+          };
+        }
+      }
+
+      function render() {
+        document.getElementById("screen-home").classList.add("hidden");
+        document.getElementById("screen-subject").classList.add("hidden");
+        document.getElementById("screen-quiz").classList.add("hidden");
+        renderStats();
+        renderNav();
+        if (route.type === "home") renderHome();
+        else if (route.type === "subject") renderSubject();
+        else if (route.type === "quiz") renderQuiz();
+      }
+
+      render();
+    </script>
+  </body>
+</html>
